@@ -2,8 +2,6 @@
 
 A `rsyncd`/`sshd` server in Docker. You know, for moving files.
 
-Monthly builds available on dockerhub [guenterbailey/rsync-server](https://hub.docker.com/repository/docker/guenterbailey/rsync-server)
-
 
 ### quickstart
 
