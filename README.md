@@ -3,7 +3,7 @@
 A `rsyncd`/`sshd` server in Docker. You know, for moving files.
 
 
-### tl;dr
+### quickstart
 
 Start a server (both `sshd` and `rsyncd` are supported)
 
