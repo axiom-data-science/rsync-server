@@ -18,12 +18,14 @@ $ docker run \
     axiom/rsync-server
 ```
 
+**Warning** If you are exposing services to the internet be sure to change the default password from `pass` by settings the environmental variable `PASSWORD`.
+
 #### `rsyncd`
 
 Please note that `/volume` is the `rsync` volume pointing to `/data`. The data
 will be at `/data` in the container. Use the `VOLUME` parameter to change the
 destination path in the container. Even when changing `VOLUME`, you will still
-`rsync` to `/volume`.
+`rsync` to `/volume`. **It is recommended that you always change the default password of `pass` by setting the `PASSWORD` environmental variable, even if you are using key authentication.**
 
 ```
 $ rsync -av /your/folder/ rsync://user@localhost:8000/volume
@@ -43,7 +45,7 @@ total size is 0  speedup is 0.00
 
 Please note that you are connecting as the `root` and not the user specified in
 the `USERNAME` variable. If you don't supply a key file you will be prompted
-for the `PASSWORD`.
+for the `PASSWORD`. **It is recommended that you always change the default password of `pass` by setting the `PASSWORD` environmental variable, even if you are using key authentication.**
 
 ```
 $ rsync -av -e "ssh -i /your/private.key -p 9000 -l root" /your/folder/ localhost:/data
@@ -58,7 +60,7 @@ total size is 0  speedup is 0.00
 ```
 
 
-### Advanced Usage
+### Usage
 
 Variable options (on run)
 
