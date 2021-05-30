@@ -28,8 +28,8 @@ PASSWORD=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 64 ; echo '')
 
 echo 'USERNAME:' ${USERNAME}
 echo 'PASSWORD:' ${PASSWORD}
-echo 'Usage ex 1: rsync -azrv -e "ssh -i ~/.ssh/id_rsa -p 9000 -l root" localhost:/data $PWD'
-echo 'Usage ex 2: rsync -azrv rsync://'${USERNAME}'@localhost:8000/volume $PWD'
+echo 'Usage ex 1: rsync -azv -e "ssh -i ~/.ssh/id_rsa -p 9000 -l root" localhost:/data $PWD'
+echo 'Usage ex 2: rsync -azv rsync://'${USERNAME}'@localhost:8000/volume $PWD'
 echo 'localhost: Your IP'
 
 docker run \
