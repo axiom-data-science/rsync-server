@@ -1,0 +1,41 @@
+name: rsync-server
+
+on:
+  push:
+    branches:
+    - 'main'
+    - 'master'
+    - 'dev'
+    paths-ignore:
+      - '**/README.md'
+  pull_request:
+    branches:
+    - '*'
+  schedule:
+    - cron: '0 7 * * 1'  # every monday at 7:00 https://crontab.guru/#0_7_*_*_1
+
+jobs:
+  image:
+    name: rsync-server:${{ matrix.arch_name }}
+    runs-on: ubuntu-20.04
+    strategy:
+      fail-fast: false
+      matrix:
+        arch_name: [amd64, 386, arm64, arm, armv5, armv6, armv7, armv8, ppc64le, s390x]
+    steps:
+      - name: "📥 Checkout Code"
+        uses: actions/checkout@v2.2.0
+        with:
+          submodules: 'recursive'
+          fetch-depth: 0
+      - name: "Docker QEMU"
+        run: make qemu_x86
+      - name: "🛠️ Build"
+        run: make ${{ matrix.arch_name }}
+      - name: "📤 Upload to hub.docker.com"
+        if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main' }}
+        run: |
+            docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASS }}
+            docker image push bensuperpc/rsync-server --all-tags
+      - name: "Clean"
+        run: make clean
