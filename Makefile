@@ -15,6 +15,7 @@
 #//  Source: https://github.com/axiom-data-science/rsync-server                                               //
 #//          https://www.docker.com/blog/getting-started-with-docker-for-arm-on-linux/
 #//          https://schinckel.net/2021/02/12/docker-%2B-makefile/
+#//          https://www.padok.fr/en/blog/multi-architectures-docker-iot
 #//  OS: ALL                                                 //
 #//  CPU: ALL                                                //
 #//                                                          //
@@ -31,36 +32,26 @@ UUID := $(shell cat /proc/sys/kernel/random/uuid)
 
 #Not in debian buster : riscv64
 
-ARCH_LIST = amd64 386 arm64 arm ppc64le s390x
+ARCH_LIST := linux/amd64 linux/arm64 linux/ppc64le linux/s390x linux/386 linux/arm/v7 linux/arm/v6 linux/arm/v5
+comma:= ,
+COM_ARCH_LIST:= $(subst $() $(),$(comma),$(ARCH_LIST))
 
 $(ARCH_LIST): $(DOCKERFILE)
-	$(DOCKER) buildx build . -f $(DOCKERFILE) -t $(IMAGE_NAME):$@-$(TAG) -t $(IMAGE_NAME):$@-latest \
-	--build-arg BUILD_DATE=$(DATE_FULL) --build-arg DOCKER_IMAGE=$(BASE_IMAGE) --platform linux/$@
+	$(DOCKER) buildx build . -f $(DOCKERFILE) -t $(IMAGE_NAME):$(TAG) -t $(IMAGE_NAME):latest \
+	--build-arg BUILD_DATE=$(DATE_FULL) --build-arg DOCKER_IMAGE=$(BASE_IMAGE) --platform $@
 
-armv5: $(DOCKERFILE)
-	$(DOCKER) buildx build . -f $(DOCKERFILE) -t $(IMAGE_NAME):armv5-$(TAG) -t $(IMAGE_NAME):armv5-latest \
-	--build-arg BUILD_DATE=$(DATE_FULL) --build-arg DOCKER_IMAGE=$(BASE_IMAGE) --platform linux/arm/v5
-
-armv6: $(DOCKERFILE)
-	$(DOCKER) buildx build . -f $(DOCKERFILE) -t $(IMAGE_NAME):armv6-$(TAG) -t $(IMAGE_NAME):armv6-latest \
-	--build-arg BUILD_DATE=$(DATE_FULL) --build-arg DOCKER_IMAGE=$(BASE_IMAGE) --platform linux/arm/v6
 	
-armv7: $(DOCKERFILE)
-	$(DOCKER) buildx build . -f $(DOCKERFILE) -t $(IMAGE_NAME):armv7-$(TAG) -t $(IMAGE_NAME):armv7-latest \
-	--build-arg BUILD_DATE=$(DATE_FULL) --build-arg DOCKER_IMAGE=$(BASE_IMAGE) --platform linux/arm/v7
-
-armv8: $(DOCKERFILE)
-	$(DOCKER) buildx build . -f $(DOCKERFILE) -t $(IMAGE_NAME):armv8-$(TAG) -t $(IMAGE_NAME):armv8-latest \
-	--build-arg BUILD_DATE=$(DATE_FULL) --build-arg DOCKER_IMAGE=$(BASE_IMAGE) --platform linux/arm/v8
-	
-all: $(ARCH_LIST) armv5 armv6 armv7 armv8
+all: $(DOCKERFILE)
+	$(DOCKER) buildx build . -f $(DOCKERFILE) -t $(IMAGE_NAME):$(TAG) -t $(IMAGE_NAME):latest \
+	--build-arg BUILD_DATE=$(DATE_FULL) --build-arg DOCKER_IMAGE=$(BASE_IMAGE) --platform $(COM_ARCH_LIST)
 
 push: all
 	$(DOCKER) image push $(IMAGE_NAME) --all-tags
 
 # https://github.com/linuxkit/linuxkit/tree/master/pkg/binfmt
-qemu_x86:
-	$(DOCKER) run --rm --privileged linuxkit/binfmt:5d33e7346e79f9c13a73c6952669e47a53b063d4-amd64
+qemu:
+	export DOCKER_CLI_EXPERIMENTAL=enabled
+	$(DOCKER) run --rm --privileged linuxkit/binfmt:v0.8
 
 clean:
 	$(DOCKER) images --filter='reference=$(IMAGE_NAME)' --format='{{.Repository}}:{{.Tag}}' | xargs -r $(DOCKER) rmi -f

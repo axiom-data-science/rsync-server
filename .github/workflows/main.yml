@@ -16,12 +16,10 @@ on:
 
 jobs:
   image:
-    name: rsync-server:${{ matrix.arch_name }}
+    name: rsync-server
     runs-on: ubuntu-20.04
     strategy:
       fail-fast: false
-      matrix:
-        arch_name: [amd64, 386, arm64, arm, armv5, armv6, armv7, armv8, ppc64le, s390x]
     steps:
       - name: "📥 Checkout Code"
         uses: actions/checkout@v2.2.0
@@ -29,9 +27,9 @@ jobs:
           submodules: 'recursive'
           fetch-depth: 0
       - name: "🛠️ Docker QEMU"
-        run: make qemu_x86
+        run: make qemu
       - name: "🛠️ Build"
-        run: make ${{ matrix.arch_name }}
+        run: make all
       - name: "📤 Upload to hub.docker.com"
         if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main' }}
         run: |
