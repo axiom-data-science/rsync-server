@@ -50,9 +50,9 @@ push: all
 # https://github.com/linuxkit/linuxkit/tree/master/pkg/binfmt
 qemu:
 	export DOCKER_CLI_EXPERIMENTAL=enabled
-	docker run -d --name buildkitd --privileged moby/buildkit:latest
-	export BUILDKIT_HOST=docker-container://buildkitd
-	$(DOCKER) buildx create --driver-opt image=moby/buildkit:master --use
+	$(DOCKER) run --rm --privileged linuxkit/binfmt:v0.8
+	$(DOCKER) buildx create --name mybuilder --driver docker-container --use
+	$(DOCKER) buildx inspect --bootstrap
 
 clean:
 	$(DOCKER) images --filter='reference=$(IMAGE_NAME)' --format='{{.Repository}}:{{.Tag}}' | xargs -r $(DOCKER) rmi -f
