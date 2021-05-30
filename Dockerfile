@@ -1,7 +1,7 @@
 ARG DOCKER_IMAGE=debian:buster-slim
 FROM $DOCKER_IMAGE
 
-LABEL author="Bensuperpc <bensuperpc@gmail.com>"
+LABEL author="Kyle Wilcox <kyle@axiomdatascience.com>"
 LABEL mantainer="Bensuperpc <bensuperpc@gmail.com>"
 
 ARG BUILD_VERSION="1.0.0"
