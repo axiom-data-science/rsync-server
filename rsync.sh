@@ -20,17 +20,19 @@ set -e
 #//                                                          //
 #//////////////////////////////////////////////////////////////
 
-#    -e ALLOW="127.0.0.1/32" \
-#    -p 8000:873 \
-#    -e VOLUME=/data \
-USERNAME=$(tr -dc A-Za-z </dev/urandom | head -c 16 ; echo '')
-PASSWORD=$(tr -dc A-Za-z0-9 </dev/urandom | head -c 64 ; echo '')
+DOCKER_IMAGE=bensuperpc/rsync-server:latest
+
+USERNAME_SIZE=16
+PASSWORD_SIZE=64
+
+USERNAME=$(tr -dc A-Za-z </dev/urandom | head -c ${USERNAME_SIZE} ; echo '')
+PASSWORD=$(tr -dc A-Za-z0-9 </dev/urandom | head -c ${PASSWORD_SIZE} ; echo '')
 
 echo 'USERNAME:' ${USERNAME}
 echo 'PASSWORD:' ${PASSWORD}
 echo 'Usage ex 1: rsync -azv -e "ssh -i ~/.ssh/id_rsa -p 9000 -l root" localhost:/data/ $PWD'
 echo 'Usage ex 2: rsync -azv rsync://'${USERNAME}'@localhost:8000/volume/ $PWD'
-echo 'localhost: Your IP'
+echo 'Replace "localhost" with "Your IP"'
 
 docker run \
     -v "$PWD/data":/data \
@@ -38,7 +40,8 @@ docker run \
     -e PASSWORD=${PASSWORD} \
     -e VOLUME=/data \
     -e ALLOW="*" \
+    -e DENY="" \
     -v ~/.ssh/id_rsa.pub:/root/.ssh/authorized_keys \
     -p 9000:22 \
     -p 8000:873 \
-    bensuperpc/rsync-server:latest
+    ${DOCKER_IMAGE}
