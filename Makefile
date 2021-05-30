@@ -32,7 +32,7 @@ UUID := $(shell cat /proc/sys/kernel/random/uuid)
 
 #Not in debian buster : riscv64
 
-ARCH_LIST := linux/amd64 linux/arm64 linux/ppc64le linux/s390x linux/386 linux/arm/v7 linux/arm/v6 linux/arm/v5
+ARCH_LIST := linux/amd64 linux/arm64 linux/ppc64le linux/s390x linux/386 linux/arm/v7 linux/arm/v6
 comma:= ,
 COM_ARCH_LIST:= $(subst $() $(),$(comma),$(ARCH_LIST))
 
