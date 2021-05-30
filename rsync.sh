@@ -41,4 +41,4 @@ docker run \
     -v ~/.ssh/id_rsa.pub:/root/.ssh/authorized_keys \
     -p 9000:22 \
     -p 8000:873 \
-    bensuperpc/rsync-server
+    bensuperpc/rsync-server:latest

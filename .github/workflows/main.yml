@@ -18,8 +18,6 @@ jobs:
   image:
     name: rsync-server
     runs-on: ubuntu-20.04
-    strategy:
-      fail-fast: false
     steps:
       - name: "📥 Checkout Code"
         uses: actions/checkout@v2.2.0
@@ -28,12 +26,9 @@ jobs:
           fetch-depth: 0
       - name: "🛠️ Docker QEMU"
         run: make qemu
-      - name: "🛠️ Build"
-        run: make all
-      - name: "📤 Upload to hub.docker.com"
-        if: ${{ github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main' }}
+      - name: "🛠️ Build and 📤 Upload to hub.docker.com"
         run: |
             docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PASS }}
-            docker image push bensuperpc/rsync-server --all-tags
+            make all
       - name: "🧹 Clean"
         run: make clean
