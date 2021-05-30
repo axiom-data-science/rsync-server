@@ -52,6 +52,8 @@ push: all
 qemu:
 	export DOCKER_CLI_EXPERIMENTAL=enabled
 	$(DOCKER) run --rm --privileged linuxkit/binfmt:v0.8
+	$(DOCKER) buildx create --name mybuilder --driver docker-container --use
+	$(DOCKER) buildx inspect --bootstrap
 
 clean:
 	$(DOCKER) images --filter='reference=$(IMAGE_NAME)' --format='{{.Repository}}:{{.Tag}}' | xargs -r $(DOCKER) rmi -f
