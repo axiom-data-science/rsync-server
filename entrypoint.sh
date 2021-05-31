@@ -5,6 +5,8 @@ USERNAME=${USERNAME:-user}
 PASSWORD=${PASSWORD:-pass}
 ALLOW=${ALLOW:-192.168.8.0/24 192.168.24.0/24 172.16.0.0/12 127.0.0.1/32}
 DENY=${DENY:-*}
+RSYNC_USER=${RSYNC_USER:-*}
+SSH_USERS=${SSH_USERS:""}
 VOLUME=${VOLUME:-/data}
 
 setup_sshd(){
@@ -57,7 +59,7 @@ port = 873
 	read only = false
 	path = ${VOLUME}
 	comment = ${VOLUME} directory
-	auth users = *
+	auth users = ${RSYNC_USER}
 	secrets file = /etc/rsyncd.secrets
 EOF
 }
