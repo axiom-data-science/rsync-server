@@ -19,11 +19,17 @@ setup_sshd(){
     echo "root:$PASSWORD" | chpasswd
 }
 
-setup_users(){
+setup_users() {
 	addgroup rsync
 	for USER in $SSH_USERS; do
 		echo 'Create user:' $USER
 		useradd -ms /bin/bash $USER
+		if [ -d "/home/$USER/" ]; then
+			echo "Home directory '$USER' exist"
+		else
+			echo "Home directory '$USER' not exist and creating directory..."
+			mkdir -p /home/$USER/
+		fi
 		usermod -a -G rsync $USER
 		echo $USER:$(head -c64 /dev/urandom | base64) | chpasswd
 		chmod 400 /home/$USER/.ssh/authorized_keys
