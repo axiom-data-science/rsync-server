@@ -61,7 +61,7 @@ case $i in
     shift # past argument=value
     ;;
     -h|--help)
-    echo "Usage: ${0##*/} [-u=<name1> -u=<name2> -p=<ssh port> or nothing with default values]"
+    echo "Usage: ${0##*/} [-u=<name1> -u=<name2> -p=<ssh port> -v=<volume_path> or nothing with default values]"
     exit 0
     ;;
     *)
@@ -84,7 +84,7 @@ echo 'SSH_USERS:' ${SSH_USERS}
 echo 'RSYNC_USER:' ${RSYNC_USER} 'cannot be changed currently'
 echo ''
 
-setup_rsakey()
+setup_sshkey()
 {
     mkdir -p $PWD/.ssh
     if [ ! -f $PWD/.ssh/$1 ]; then
@@ -96,12 +96,12 @@ setup_rsakey()
 
 # Create multiple user
 for USER in $SSH_USERS; do
-    setup_rsakey "$USER"
+    setup_sshkey "$USER"
     USER_VOL_KEY+=" -v  $PWD/.ssh/$USER.pub:/home/$USER/.ssh/authorized_keys"
 done
 
 # Create root user
-setup_rsakey "root"
+setup_sshkey "root"
 
 docker pull ${DOCKER_IMAGE}
 docker run \

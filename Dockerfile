@@ -4,8 +4,8 @@ FROM $DOCKER_IMAGE
 LABEL author="Kyle Wilcox <kyle@axiomdatascience.com>"
 LABEL mantainer="Bensuperpc <bensuperpc@gmail.com>"
 
-ARG BUILD_VERSION="1.0.0"
-ENV BUILD_VERSION=$BUILD_VERSION
+ARG VERSION="1.0.0"
+ENV VERSION=$VERSION
 
 ENV DEBIAN_FRONTEND noninteractive
 ENV LANG C.UTF-8
@@ -33,13 +33,13 @@ ENTRYPOINT ["/entrypoint.sh"]
 ARG BUILD_DATE
 ARG VCS_REF
 
-LABEL org.label-schema.schema-version="1.0"
-LABEL org.label-schema.build-date=$BUILD_DATE
-LABEL org.label-schema.name="bensuperpc/rsync-server"
-LABEL org.label-schema.description="rsync server in docker"
-LABEL org.label-schema.version=$BUILD_VERSION
-LABEL org.label-schema.vendor="Bensuperpc"
-LABEL org.label-schema.url="http://bensuperpc.com/"
-LABEL org.label-schema.vcs-url="https://github.com/Bensuperpc/rsync-server"
-LABEL org.label-schema.vcs-ref=$VCS_REF
-LABEL org.label-schema.docker.cmd="docker build -t bensuperpc/rsync-server -f Dockerfile ."
+LABEL org.label-schema.schema-version="1.0" \
+	  org.label-schema.build-date=$BUILD_DATE \
+	  org.label-schema.name="bensuperpc/rsync-server" \
+	  org.label-schema.description="rsync server in docker" \
+	  org.label-schema.version=$VERSION \
+	  org.label-schema.vendor="Bensuperpc" \
+	  org.label-schema.url="http://bensuperpc.com/" \
+	  org.label-schema.vcs-url="https://github.com/Bensuperpc/rsync-server" \
+	  org.label-schema.vcs-ref=$VCS_REF \
+	  org.label-schema.docker.cmd="docker build -t bensuperpc/rsync-server -f Dockerfile ."

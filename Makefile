@@ -27,8 +27,9 @@ DOCKERFILE := Dockerfile
 DOCKER := docker
 
 TAG := $(shell date '+%Y%m%d')-$(shell git rev-parse --short HEAD)
-DATE_FULL := $(shell date +%Y-%m-%d_%H:%M:%S)
+DATE_FULL := $(shell date -u +"%Y-%m-%dT%H:%M:%SZ)
 UUID := $(shell cat /proc/sys/kernel/random/uuid)
+VERSION := 1.0.0
 
 #Not in debian buster : riscv64
 
@@ -38,12 +39,14 @@ COM_ARCH_LIST:= $(subst $() $(),$(comma),$(ARCH_LIST))
 
 $(ARCH_LIST): $(DOCKERFILE)
 	$(DOCKER) buildx build . -f $(DOCKERFILE) -t $(IMAGE_NAME):$(TAG) -t $(IMAGE_NAME):latest \
-	--build-arg BUILD_DATE=$(DATE_FULL) --build-arg DOCKER_IMAGE=$(BASE_IMAGE) --platform $@ --load
+	--build-arg BUILD_DATE=$(DATE_FULL) --build-arg DOCKER_IMAGE=$(BASE_IMAGE) --platform $@ \
+	--build-arg VERSION=$(VERSION) --load
 
 	
 all: $(DOCKERFILE)
 	$(DOCKER) buildx build . -f $(DOCKERFILE) -t $(IMAGE_NAME):$(TAG) -t $(IMAGE_NAME):latest \
-	--build-arg BUILD_DATE=$(DATE_FULL) --build-arg DOCKER_IMAGE=$(BASE_IMAGE) --platform $(COM_ARCH_LIST) --push
+	--build-arg BUILD_DATE=$(DATE_FULL) --build-arg DOCKER_IMAGE=$(BASE_IMAGE) --platform $(COM_ARCH_LIST) \
+	--build-arg VERSION=$(VERSION) --push
 
 push: all
 
