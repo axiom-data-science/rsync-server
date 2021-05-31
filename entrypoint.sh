@@ -7,7 +7,6 @@ ALLOW=${ALLOW:-192.168.8.0/24 192.168.24.0/24 172.16.0.0/12 127.0.0.1/32}
 DENY=${DENY:-*}
 VOLUME=${VOLUME:-/data}
 
-
 setup_sshd(){
 	if [ -e "/root/.ssh/authorized_keys" ]; then
         chmod 400 /root/.ssh/authorized_keys
@@ -18,6 +17,20 @@ setup_sshd(){
     fi
     chmod 750 /root/.ssh
     echo "root:$PASSWORD" | chpasswd
+}
+
+setup_users(){
+	addgroup rsync
+	for USER in $SSH_USERS; do
+		echo 'Create user:' $USER
+		useradd -ms /bin/bash $USER
+		usermod -a -G rsync $USER
+		echo $USER:$(head -c64 /dev/urandom | base64) | chpasswd
+		chmod 400 /home/$USER/.ssh/authorized_keys
+		chown $USER:$USER /home/$USER/.ssh/authorized_keys
+		chmod 750 /home/$USER/.ssh
+		chown $USER:$USER /home/$USER/.ssh
+	done
 }
 
 setup_rsyncd(){
@@ -38,19 +51,21 @@ port = 873
 	read only = false
 	path = ${VOLUME}
 	comment = ${VOLUME} directory
-	auth users = ${USERNAME}
+	auth users = *
 	secrets file = /etc/rsyncd.secrets
 EOF
 }
 
 
 if [ "$1" = 'rsync_server' ]; then
+	setup_users
     setup_sshd
     exec /usr/sbin/sshd &
     mkdir -p $VOLUME
     setup_rsyncd
     exec /usr/bin/rsync --no-detach --daemon --config /etc/rsyncd.conf "$@"
 else
+	setup_users
 	setup_sshd
 	exec /usr/sbin/sshd &
 fi

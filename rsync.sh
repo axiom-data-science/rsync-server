@@ -42,6 +42,9 @@ docker run \
     -e ALLOW="*" \
     -e DENY="" \
     -v ~/.ssh/id_rsa.pub:/root/.ssh/authorized_keys \
+    -e SSH_USERS="hello bonjour" \
+    -v ~/.ssh/hello.pub:/home/hello/.ssh/authorized_keys \
+    -v ~/.ssh/bonjour.pub:/home/bonjour/.ssh/authorized_keys \
     -p 9000:22 \
     -p 8000:873 \
     ${DOCKER_IMAGE}
