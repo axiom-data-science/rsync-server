@@ -12,7 +12,7 @@ ENV LANG C.UTF-8
 ENV NOTVISIBLE "in users profile"
 
 RUN apt-get update && \
-	apt-get install -y openssh-server rsync && \
+	apt-get install -y openssh-server rsync --no-install-recommends && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
