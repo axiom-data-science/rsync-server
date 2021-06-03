@@ -20,7 +20,7 @@
 #//  CPU: ALL                                                //
 #//                                                          //
 #//////////////////////////////////////////////////////////////
-BASE_IMAGE := debian:buster-slim
+BASE_IMAGE := debian:bullseye-slim
 IMAGE_NAME := bensuperpc/rsync-server
 DOCKERFILE := Dockerfile
 

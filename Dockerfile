@@ -1,4 +1,4 @@
-ARG DOCKER_IMAGE=debian:buster-slim
+ARG DOCKER_IMAGE=debian:bullseye-slim
 FROM $DOCKER_IMAGE
 
 LABEL author="Kyle Wilcox <kyle@axiomdatascience.com>"
