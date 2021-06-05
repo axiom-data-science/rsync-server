@@ -8,6 +8,12 @@ A `rsyncd`/`sshd` server in Docker. You know, for moving files.
 Start a server (both `sshd` and `rsyncd` are supported)
 
 ```
+./rsync.sh
+```
+
+or
+
+```
 $ docker run \
     --name rsync-server \ # Name it
     -p 8000:873 \ # rsyncd port
