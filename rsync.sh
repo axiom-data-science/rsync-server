@@ -34,7 +34,7 @@ USER_VOL_KEY=""
 
 VOLUME_PATH="$PWD/data"
 
-SSH_CONFIG_FILE=""
+SSH_CONFIG_FOLDER=""
 
 SSH_PORT=9000
 RSYNC_PORT=8000
@@ -51,7 +51,7 @@ case $i in
     shift # past argument=value
     ;;
     -c=*|--config=*)
-    SSH_CONFIG_FILE="${i#*=}"
+    SSH_CONFIG_FOLDER="${i#*=}"
     shift # past argument=value
     ;;
     -p=*|--sshport=*)
@@ -88,13 +88,13 @@ echo 'SSH_PORT:' ${SSH_PORT}
 echo 'RSYNC_PORT:' ${RSYNC_PORT} 'cannot be changed currently'
 echo 'SSH_USERS:' ${SSH_USERS}
 echo 'RSYNC_USER:' ${RSYNC_USER} 'cannot be changed currently'
-if [ -z "${SSH_CONFIG_FILE}" ]; then
-    echo 'SSH_CONFIG_FILE: is not set'
+if [ -z "${SSH_CONFIG_FOLDER}" ]; then
+    echo 'SSH_CONFIG_FOLDER: is not set'
 else
-    #SSH_CONFIG_FILE="-v ${SSH_CONFIG_FILE}:/etc/ssh/sshd_config"
-    #echo 'SSH_CONFIG_FILE:' ${SSH_CONFIG_FILE}
-    SSH_CONFIG_FILE="-v ${SSH_CONFIG_FILE}:/etc/ssh/"
-    echo 'SSH_CONFIG_FILE:' ${SSH_CONFIG_FILE}
+    #SSH_CONFIG_FOLDER="-v ${SSH_CONFIG_FOLDER}:/etc/ssh/sshd_config"
+    #echo 'SSH_CONFIG_FOLDER:' ${SSH_CONFIG_FOLDER}
+    SSH_CONFIG_FOLDER="-v ${SSH_CONFIG_FOLDER}:/etc/ssh/"
+    echo 'SSH_CONFIG_FOLDER:' ${SSH_CONFIG_FOLDER}
 fi
 echo ''
 
@@ -128,7 +128,7 @@ docker run \
     -v $PWD/.ssh/root.pub:/root/.ssh/authorized_keys \
     -e SSH_USERS="${SSH_USERS}" \
     -e RSYNC_USER="${RSYNC_USER}" \
-    ${USER_VOL_KEY} ${SSH_CONFIG_FILE} \
+    ${USER_VOL_KEY} ${SSH_CONFIG_FOLDER} \
     -p ${SSH_PORT}:22 \
     -p ${RSYNC_PORT}:873 \
     ${DOCKER_IMAGE}
