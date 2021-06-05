@@ -34,6 +34,8 @@ USER_VOL_KEY=""
 
 VOLUME_PATH="$PWD/data"
 
+SSH_CONFIG_FILE=""
+
 SSH_PORT=9000
 RSYNC_PORT=8000
 
@@ -46,6 +48,10 @@ case $i in
     ;;
     -v=*|--volumepath=*)
     VOLUME_PATH="${i#*=}"
+    shift # past argument=value
+    ;;
+    -c=*|--config=*)
+    SSH_CONFIG_FILE="${i#*=}"
     shift # past argument=value
     ;;
     -p=*|--sshport=*)
@@ -82,7 +88,16 @@ echo 'SSH_PORT:' ${SSH_PORT}
 echo 'RSYNC_PORT:' ${RSYNC_PORT} 'cannot be changed currently'
 echo 'SSH_USERS:' ${SSH_USERS}
 echo 'RSYNC_USER:' ${RSYNC_USER} 'cannot be changed currently'
+if [ -z "${SSH_CONFIG_FILE}" ]; then
+    echo 'SSH_CONFIG_FILE: is not set'
+else
+    #SSH_CONFIG_FILE="-v ${SSH_CONFIG_FILE}:/etc/ssh/sshd_config"
+    #echo 'SSH_CONFIG_FILE:' ${SSH_CONFIG_FILE}
+    SSH_CONFIG_FILE="-v ${SSH_CONFIG_FILE}:/etc/ssh/"
+    echo 'SSH_CONFIG_FILE:' ${SSH_CONFIG_FILE}
+fi
 echo ''
+
 
 setup_sshkey()
 {
@@ -103,7 +118,6 @@ done
 # Create root user
 setup_sshkey "root"
 
-docker pull ${DOCKER_IMAGE}
 docker run \
     -v "${VOLUME_PATH}":/data \
     -e USERNAME=${USERNAME} \
@@ -114,7 +128,7 @@ docker run \
     -v $PWD/.ssh/root.pub:/root/.ssh/authorized_keys \
     -e SSH_USERS="${SSH_USERS}" \
     -e RSYNC_USER="${RSYNC_USER}" \
-    ${USER_VOL_KEY} \
+    ${USER_VOL_KEY} ${SSH_CONFIG_FILE} \
     -p ${SSH_PORT}:22 \
     -p ${RSYNC_PORT}:873 \
     ${DOCKER_IMAGE}

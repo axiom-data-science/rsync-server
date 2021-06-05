@@ -8,7 +8,7 @@ A `rsyncd`/`sshd` server in Docker. You know, for moving files.
 Start a server (both `sshd` and `rsyncd` are supported)
 
 ```
-./rsync.sh
+./rsync.sh -v=$PWD/test -u=hello -u=bonjour
 ```
 
 or

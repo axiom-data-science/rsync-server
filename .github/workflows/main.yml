@@ -17,13 +17,15 @@ on:
 jobs:
   image:
     name: rsync-server
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: "📥 Checkout Code"
         uses: actions/checkout@v2.3.4
         with:
           submodules: 'recursive'
           fetch-depth: 0
+      - name: "🛠️ Bash check"
+        run: find . -type f -name "*.sh" -exec bash -n {} \;
       - name: "🛠️ Docker QEMU"
         run: make qemu
       - name: "🛠️ Build and 📤 Upload to hub.docker.com"
