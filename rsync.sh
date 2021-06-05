@@ -23,7 +23,7 @@ set -e
 DOCKER_IMAGE=bensuperpc/rsync-server:latest
 
 USERNAME_SIZE=16
-PASSWORD_SIZE=48
+PASSWORD_SIZE=64
 
 USERNAME=$(tr -dc A-Za-z </dev/urandom | head -c ${USERNAME_SIZE} ; echo '')
 PASSWORD=$(tr -dc A-Za-z0-9 </dev/urandom | head -c ${PASSWORD_SIZE} ; echo '')
