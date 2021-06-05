@@ -23,7 +23,7 @@ set -e
 DOCKER_IMAGE=bensuperpc/rsync-server:latest
 
 USERNAME_SIZE=16
-PASSWORD_SIZE=64
+PASSWORD_SIZE=48
 
 USERNAME=$(tr -dc A-Za-z </dev/urandom | head -c ${USERNAME_SIZE} ; echo '')
 PASSWORD=$(tr -dc A-Za-z0-9 </dev/urandom | head -c ${PASSWORD_SIZE} ; echo '')
@@ -34,7 +34,7 @@ USER_VOL_KEY=""
 
 VOLUME_PATH="$PWD/data"
 
-SSH_CONFIG_FOLDER=""
+SSH_CONFIG_SSHD=""
 
 SSH_PORT=9000
 RSYNC_PORT=8000
@@ -50,8 +50,8 @@ case $i in
     VOLUME_PATH="${i#*=}"
     shift # past argument=value
     ;;
-    -c=*|--config=*)
-    SSH_CONFIG_FOLDER="${i#*=}"
+    -c|--config)
+    SSH_CONFIG_SSHD="true"
     shift # past argument=value
     ;;
     -p=*|--sshport=*)
@@ -88,13 +88,11 @@ echo 'SSH_PORT:' ${SSH_PORT}
 echo 'RSYNC_PORT:' ${RSYNC_PORT} 'cannot be changed currently'
 echo 'SSH_USERS:' ${SSH_USERS}
 echo 'RSYNC_USER:' ${RSYNC_USER} 'cannot be changed currently'
-if [ -z "${SSH_CONFIG_FOLDER}" ]; then
-    echo 'SSH_CONFIG_FOLDER: is not set'
+if [ -z "${SSH_CONFIG_SSHD}" ]; then
+    echo 'SSH_CONFIG_SSHD: is not set'
 else
-    #SSH_CONFIG_FOLDER="-v ${SSH_CONFIG_FOLDER}:/etc/ssh/sshd_config"
-    #echo 'SSH_CONFIG_FOLDER:' ${SSH_CONFIG_FOLDER}
-    SSH_CONFIG_FOLDER="-v ${SSH_CONFIG_FOLDER}:/etc/ssh/"
-    echo 'SSH_CONFIG_FOLDER:' ${SSH_CONFIG_FOLDER}
+    SSH_CONFIG_SSHD=" -v $PWD/ssh_config/sshd_config:/etc/ssh/sshd_config"
+    echo 'SSH_CONFIG_SSHD:' ${SSH_CONFIG_SSHD}
 fi
 echo ''
 
@@ -128,7 +126,10 @@ docker run \
     -v $PWD/.ssh/root.pub:/root/.ssh/authorized_keys \
     -e SSH_USERS="${SSH_USERS}" \
     -e RSYNC_USER="${RSYNC_USER}" \
-    ${USER_VOL_KEY} ${SSH_CONFIG_FOLDER} \
+    ${USER_VOL_KEY}  \
+    ${SSH_CONFIG_SSHD} \
     -p ${SSH_PORT}:22 \
     -p ${RSYNC_PORT}:873 \
     ${DOCKER_IMAGE}
+
+#${SSH_CONFIG_SSHD}
