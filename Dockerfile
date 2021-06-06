@@ -1,4 +1,4 @@
-ARG DOCKER_IMAGE=debian:buster-slim
+ARG DOCKER_IMAGE=debian:bullseye-slim
 FROM $DOCKER_IMAGE
 
 LABEL author="Kyle Wilcox <kyle@axiomdatascience.com>"
@@ -12,6 +12,7 @@ ENV LANG C.UTF-8
 ENV NOTVISIBLE "in users profile"
 
 RUN apt-get update && \
+	apt-get dist-upgrade -y && \
 	apt-get install -y openssh-server rsync --no-install-recommends && \
 	apt-get clean && \
 	rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
