@@ -33,14 +33,14 @@ VERSION := 1.0.0
 
 #Not in debian buster : riscv64
 
-ARCH_LIST := linux/amd64 linux/arm64 linux/ppc64le linux/s390x linux/386 linux/arm/v7 linux/arm/v6
+ARCH_LIST := linux/arm/v6 linux/amd64 linux/arm64 linux/ppc64le linux/s390x linux/386 linux/arm/v7
 comma:= ,
 COM_ARCH_LIST:= $(subst $() $(),$(comma),$(ARCH_LIST))
 
 $(ARCH_LIST): $(DOCKERFILE)
 	$(DOCKER) buildx build . -f $(DOCKERFILE) -t $(IMAGE_NAME):$(TAG) -t $(IMAGE_NAME):latest \
 	--build-arg BUILD_DATE=$(DATE_FULL) --build-arg DOCKER_IMAGE=$(BASE_IMAGE) --platform $@ \
-	--build-arg VERSION=$(VERSION) --load
+	--build-arg VERSION=$(VERSION) --no-cache --load
 
 	
 all: $(DOCKERFILE)
