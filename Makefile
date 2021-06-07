@@ -33,7 +33,7 @@ VERSION := 1.0.0
 
 #Not in debian buster : riscv64
 
-ARCH_LIST := linux/arm/v6 linux/amd64 linux/arm64 linux/ppc64le linux/s390x linux/386 linux/arm/v7
+ARCH_LIST := linux/amd64 linux/386
 comma:= ,
 COM_ARCH_LIST:= $(subst $() $(),$(comma),$(ARCH_LIST))
 
