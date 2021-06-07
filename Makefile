@@ -40,7 +40,7 @@ COM_ARCH_LIST:= $(subst $() $(),$(comma),$(ARCH_LIST))
 $(ARCH_LIST): $(DOCKERFILE)
 	$(DOCKER) buildx build . -f $(DOCKERFILE) -t $(IMAGE_NAME):$(TAG) -t $(IMAGE_NAME):latest \
 	--build-arg BUILD_DATE=$(DATE_FULL) --build-arg DOCKER_IMAGE=$(BASE_IMAGE) --platform $@ \
-	--build-arg VERSION=$(VERSION) --no-cache --load
+	--build-arg VERSION=$(VERSION) --load
 
 	
 all: $(DOCKERFILE)
