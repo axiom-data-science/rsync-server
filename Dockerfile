@@ -17,6 +17,14 @@ RUN echo "export VISIBLE=now" >> /etc/profile
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod 744 /entrypoint.sh
 
+ENV USERNAME='admin'
+ENV PASSWORD='mysecret'
+ENV SERVICE_NAMES=''
+ENV ALLOW='10.0.0.0/8 172.16.0.0/12 192.168.0.0/16'
+ENV VOLUME='/data'
+
+VOLUME [ "/data" ]
+
 EXPOSE 22
 EXPOSE 873
 
