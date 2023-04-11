@@ -28,7 +28,8 @@ jobs:
           images: |
             axiom/rsync-server
           tags: |
-            type=ref,event=branch
+            type=raw,value=latest,enable=${{ github.ref_name == 'main' }}
+            type=ref,event=branch,enable=${{ github.ref_name != 'main' }}
             type=ref,event=tag
 
       - name: Set up QEMU
