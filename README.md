@@ -63,10 +63,18 @@ total size is 0  speedup is 0.00
 
 Variable options (on run)
 
-* `USERNAME` - the `rsync` username. defaults to `user`
-* `PASSWORD` - the `rsync` password. defaults to `pass`
-* `VOLUME`   - the path for `rsync`. defaults to `/data`
-* `ALLOW`    - space separated list of allowed sources. defaults to `10.0.0.0/8 192.168.0.0/16 172.16.0.0/12 127.0.0.1/32`.
+|     Parameter     | Function |
+| :---------------: | -------- |
+| `USERNAME`        | the `rsync` username. defaults to `root`|
+| `PASSWORD`        | the `rsync` password. defaults to `root`|
+| `AUTHORIZED_KEYS` | the `ssh` key (for root user). defaults empty |
+| `VOLUME`   | the path for `rsync`. defaults to `/data`|
+| `PUID`     | UserID used to transfer files when running the rsync . defaults to `root`|
+| `GUID`     | GroupID used to transfer files when running the rsync . defaults to `root`|
+| `DENY`     | space separated list of allowed sources. defaults to `*`|
+| `ALLOW`    | space separated list of allowed sources. defaults to `10.0.0.0/8 192.168.0.0/16 172.16.0.0/12 127.0.0.1/32`.|
+| `RO`     | `rsync` volume read only. defaults to `false`|
+| `CUSTOMCONFIG` | rsyncd.conf custom config for subsection volume (`\n\t` for new line ex: `uid = root\n\tgid = root`). defaults empty |
 
 ### Simple server on port 873
 
