@@ -65,8 +65,8 @@ Variable options (on run)
 
 |     Parameter     | Function |
 | :---------------: | -------- |
-| `USERNAME`        | the `rsync` username. defaults to `root`|
-| `PASSWORD`        | the `rsync` password. defaults to `root`|
+| `USERNAME`        | the `rsync` username. defaults to `user`|
+| `PASSWORD`        | the `rsync` password. defaults to `pass`|
 | `AUTHORIZED_KEYS` | the `ssh` key (for root user). defaults empty |
 | `VOLUME`   | the path for `rsync`. defaults to `/data`|
 | `PUID`     | UserID used to transfer files when running the rsync . defaults to `root`|
