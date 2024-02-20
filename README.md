@@ -12,19 +12,19 @@ docker run \
     -p 8000:873 \
     -p 9000:22 \
     -e USERNAME=user \
-    -e PASSWORD=pass \
+    -e PASSWORD=someSecurePassword_NOT_THIS \
     -v /your/public.key:/root/.ssh/authorized_keys \
     axiom/rsync-server:latest
 ```
 
-**Warning** If you are exposing services to the internet be sure to change the default password from `pass` by settings the environmental variable `PASSWORD`.
+**You must set a password via `PASSWORD` or `PASSWORD_FILE`, even if you are using key authentication.**
 
 ### `rsyncd`
 
 Please note that `/volume` is the `rsync` volume pointing to `/data`. The data
 will be at `/data` in the container. Use the `VOLUME` parameter to change the
 destination path in the container. Even when changing `VOLUME`, you will still
-`rsync` to `/volume`. **It is recommended that you always change the default password of `pass` by setting the `PASSWORD` environmental variable, even if you are using key authentication.**
+`rsync` to `/volume`.
 
 ```shell
 rsync -av /your/folder/ rsync://user@localhost:8000/volume
@@ -44,7 +44,7 @@ total size is 0  speedup is 0.00
 
 Please note that you are connecting as the `root` and not the user specified in
 the `USERNAME` variable. If you don't supply a key file you will be prompted
-for the `PASSWORD`. **It is recommended that you always change the default password of `pass` by setting the `PASSWORD` environmental variable, even if you are using key authentication.**
+for the `PASSWORD`.
 
 ```shell
 rsync -av -e "ssh -i /your/private.key -p 9000 -l root" /your/folder/ localhost:/data
@@ -66,7 +66,8 @@ Variable options (on run)
 |     Parameter     | Function |
 | :---------------: | -------- |
 | `USERNAME`        | the `rsync` username. defaults to `user`|
-| `PASSWORD`        | the `rsync` password. defaults to `pass`|
+| `PASSWORD`        | the `rsync` password. **One of `PASSWORD` or `PASSWORD_FILE` is required.**|
+| `PASSWORD_FILE`   | path to a file containing the `rsync` password. **One of `PASSWORD` or `PASSWORD_FILE` is required.**|
 | `AUTHORIZED_KEYS` | the `ssh` key (for root user). defaults empty |
 | `VOLUME`   | the path for `rsync`. defaults to `/data`|
 | `PUID`     | UserID used to transfer files when running the rsync . defaults to `root`|
@@ -79,13 +80,13 @@ Variable options (on run)
 ### Simple server on port 873
 
 ```shell
-docker run -p 873:873 axiom/rsync-server:latest
+docker run -p 873:873 -e PASSWORD=changeme axiom/rsync-server:latest
 ```
 
 ### Use a volume for the default `/data`
 
 ```shell
-docker run -p 873:873 -v /your/folder:/data axiom/rsync-server:latest
+docker run -p 873:873 -e PASSWORD=seriouslychangeme -v /your/folder:/data axiom/rsync-server:latest
 ```
 
 ### Set a username and password
@@ -95,7 +96,19 @@ docker run \
     -p 873:873 \
     -v /your/folder:/data \
     -e USERNAME=admin \
-    -e PASSWORD=mysecret \
+    -e PASSWORD=imnotkidding \
+    axiom/rsync-server:latest
+```
+
+### Set password via file
+
+```shell
+docker run \
+    -p 873:873 \
+    -v /your/folder:/data \
+    -v ./password-file-with-secure-permissions:/etc/rsyncd/password:ro \
+    -e USERNAME=admin \
+    -e PASSWORD_FILE=/etc/rsyncd/password \
     axiom/rsync-server:latest
 ```
 
@@ -106,7 +119,7 @@ docker run \
     -p 9999:873 \
     -v /your/folder:/data \
     -e USERNAME=admin \
-    -e PASSWORD=mysecret \
+    -e PASSWORD=plzchng \
     axiom/rsync-server:latest
 ```
 
@@ -123,7 +136,7 @@ docker run \
     -p 9999:873 \
     -v /your/folder:/myvolume \
     -e USERNAME=admin \
-    -e PASSWORD=mysecret \
+    -e PASSWORD=yougetitnow \
     -e VOLUME=/myvolume \
     axiom/rsync-server:latest
 ```
@@ -141,7 +154,7 @@ docker run \
     -p 9999:873 \
     -v /your/folder:/myvolume \
     -e USERNAME=admin \
-    -e PASSWORD=mysecret \
+    -e PASSWORD=hopesoanyway \
     -e VOLUME=/myvolume \
     -e ALLOW=192.168.24.0/24 \
     axiom/rsync-server:latest
@@ -164,7 +177,7 @@ inside of the container.
 docker run \
     -v /your/folder:/myvolume \
     -e USERNAME=admin \
-    -e PASSWORD=mysecret \
+    -e PASSWORD=2manyp455w0rd5 \
     -e VOLUME=/myvolume \
     -e ALLOW=10.0.0.0/8 192.168.0.0/16 172.16.0.0/12 127.0.0.1/32 \
     -v /my/authorized_keys:/root/.ssh/authorized_keys \
