@@ -23,9 +23,6 @@ if [ -z "$PASSWORD" ]; then
     exit 1
 fi
 
-echo $PASSWORD
-exit
-
 setup_sshd(){
     if [ -e "/root/.ssh/authorized_keys" ]; then
         chmod 400 /root/.ssh/authorized_keys
