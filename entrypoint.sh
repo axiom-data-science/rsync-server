@@ -1,10 +1,15 @@
 #!/bin/bash
 set -e
-
+# AUTHORIZED_KEYS
 USERNAME=${USERNAME:-user}
 PASSWORD=${PASSWORD:-pass}
-ALLOW=${ALLOW:-10.0.0.0/8 192.168.0.0/16 172.16.0.0/12 127.0.0.1/32}
 VOLUME=${VOLUME:-/data}
+PUID=${PUID:-root}
+GUID=${GUID:-root}
+DENY=${DENY:-"*"}
+ALLOW=${ALLOW:-10.0.0.0/8 192.168.0.0/16 172.16.0.0/12 127.0.0.1/32}
+RO=${RO:-false}
+# CUSTOMCONFIG
 
 
 setup_sshd(){
@@ -14,6 +19,9 @@ setup_sshd(){
     else
 		mkdir -p /root/.ssh
 		chown root:root /root/.ssh
+		if [ ! -z "$AUTHORIZED_KEYS" ]; then
+			echo "$AUTHORIZED_KEYS" > /root/.ssh/authorized_keys
+		fi
     fi
     chmod 750 /root/.ssh
     echo "root:$PASSWORD" | chpasswd
@@ -29,16 +37,20 @@ max connections = 10
 port = 873
 
 [volume]
-	uid = root
-	gid = root
-	hosts deny = *
+	uid = ${PUID}
+	gid = ${GUID}
+	hosts deny = ${DENY}
 	hosts allow = ${ALLOW}
-	read only = false
+	read only = ${RO}
 	path = ${VOLUME}
 	comment = ${VOLUME} directory
 	auth users = ${USERNAME}
 	secrets file = /etc/rsyncd.secrets
 EOF
+
+if [ ! -z "$CUSTOMCONFIG" ]; then
+	echo -e "\t${CUSTOMCONFIG}" >> /etc/rsyncd.conf
+fi
 }
 
 
