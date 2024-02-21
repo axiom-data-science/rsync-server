@@ -23,18 +23,42 @@ if [ -z "$PASSWORD" ]; then
     exit 1
 fi
 
-setup_sshd(){
-    if [ -e "/root/.ssh/authorized_keys" ]; then
-        chmod 400 /root/.ssh/authorized_keys
-        chown root:root /root/.ssh/authorized_keys
-    else
-        mkdir -p /root/.ssh
-        chown root:root /root/.ssh
-        if [ ! -z "$AUTHORIZED_KEYS" ]; then
-            echo "$AUTHORIZED_KEYS" > /root/.ssh/authorized_keys
-        fi
+check_permissions(){
+    # Make sure target has uid 0, gid 0, and provided octal permissions
+    TARGET_PATH="$1"
+    TARGET_PERMISSIONS="$2"
+
+    EXISTING_UID=$(stat -c "%u" "$TARGET_PATH")
+    EXISTING_GID=$(stat -c "%g" "$TARGET_PATH")
+    EXISTING_PERMISSIONS=$(stat -c "%a" "$TARGET_PATH")
+
+    if [ "$EXISTING_UID" -ne "0" ] || [ "$EXISTING_GID" -ne "0" ]; then
+        echo "$TARGET_PATH should have owner and group root, attempting chown" >&2
+        chown root:root "$TARGET_PATH"
     fi
-    chmod 750 /root/.ssh
+
+    if [ "$EXISTING_PERMISSIONS" -ne "$TARGET_PERMISSIONS" ]; then
+        echo "$TARGET_PATH should have $TARGET_PERMISSIONS permissions (currently $EXISTING_PERMISSIONS), attempting chmod" >&2
+        chmod "$TARGET_PERMISSIONS" "$TARGET_PATH"
+    fi
+}
+
+setup_sshd(){
+    SSH_DIR="/root/.ssh"
+    AUTH_KEYS_PATH="${SSH_DIR}/authorized_keys"
+
+    if [ ! -d "$SSH_DIR" ]; then
+        install -d -m 700 "$SSH_DIR"
+    fi
+    check_permissions "$SSH_DIR" "700"
+
+    if [ ! -z "$AUTHORIZED_KEYS" ]; then
+        install -m 400 <(echo "$AUTHORIZED_KEYS") "$AUTH_KEYS_PATH"
+    fi
+    if [ -e "$AUTH_KEYS_PATH" ]; then
+        check_permissions "$AUTH_KEYS_PATH" "400"
+    fi
+
     echo "root:$PASSWORD" | chpasswd
 }
 

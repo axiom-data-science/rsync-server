@@ -163,7 +163,10 @@ docker run \
 ### Over SSH
 
 If you would like to connect over ssh, you may mount your public key or
-`authorized_keys` file to `/root/.ssh/authorized_keys`.
+`authorized_keys` file to `/root/.ssh/authorized_keys`. This file
+must have owner root, group root, and 400 octal permissions.
+
+Alternatively, you may specify the `AUTHORIZED_KEYS` environment variable.
 
 Without setting up an `authorized_keys` file, you will be propted for the
 password (which was specified in the `PASSWORD` variable).
