@@ -66,7 +66,7 @@ setup_rsyncd(){
     echo "$USERNAME:$PASSWORD" > /etc/rsyncd.secrets
     chmod 0400 /etc/rsyncd.secrets
     [ -f /etc/rsyncd.conf ] || cat > /etc/rsyncd.conf <<EOF
-log file = /dev/stdout
+log file = /dev/stderr
 timeout = 300
 max connections = 10
 port = 873
